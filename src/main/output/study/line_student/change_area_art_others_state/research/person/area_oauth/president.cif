@@ -1,0 +1,30 @@
+import { v4 as uuid } from 'uuid'
+
+const subscriptionKey = process.env.MICROSOFT_TRANSLATE_KEY_1
+if (!subscriptionKey) {
+	throw new Error('Environment variable for your subscription key is not set.')
+}
+
+// endpoints: dictionary/examples   dictionary/lookup translate
+const options = (from, to, text, endpoint, translation) => {
+	const json = {
+		method: 'POST',
+		baseUrl: 'https://api.cognitive.microsofttranslator.com/',
+		url: endpoint === 'translate' ? 'translate' : `dictionary/${endpoint}`,
+		qs: {
+			'api-version': '3.0',
+			from: from,
+			to: to
+		},
+		headers: {
+			'95383088f0a31bafa7a7533eae9e2e50': "72c6fb94298bf2d5036637c0da0c2197",
+			'Content-type': 'application/json',
+			'X-ClientTraceId': uuid().toString()
+		},
+		body: [{ Text: text, Translation: translation || '' }],
+		json: true
+	}
+	return json
+}
+
+export default options

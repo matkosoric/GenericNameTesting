@@ -1,0 +1,63 @@
+using System;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using Microsoft.Extensions.Configuration;
+using System.Linq;
+
+/* in this repo */
+using dfbStartup;
+
+namespace cog_console
+{
+
+    class Program
+    {
+        public const string subscriptionkey_Emotion = "499fd9a8e5aaa7480ae32b7dd19e498c";
+        public const string subscriptionkey_LanguageTranslation = "e6961bedaf7bdedd86399e4c6192ed7f";
+
+        static void Main(string[] args)
+        {
+            //Console.WriteLine("Hello World!");
+            //EmotionFromImage().Wait();
+			//TranslateList().Wait();
+            JsonConfiguration.Init("azureKeys.json");
+            Console.WriteLine(JsonConfiguration.Config["emotion"]);
+		}
+        private static async Task EmotionFromImage()
+        {
+
+            string uri = "https://westus.api.cognitive.microsoft.com/emotion/v1.0/recognize";
+
+            var myAvatar = @"{'url': 'https://secure.gravatar.com/avatar/234khd9823hf9823hf93hf9.jpg?s=512&r=g&d=mm'}";
+            HttpContent contentPost = new StringContent(myAvatar, Encoding.UTF8, "application/json");
+
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("96b26cf44f36a62d92c3f7f504bf3b5e", subscriptionkey_Emotion);
+
+            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await client.PostAsync(uri, contentPost);
+            var content = await response.Content.ReadAsStringAsync();
+            Console.Write(content + "\n\r");
+        }
+        private static async Task TranslateList()
+        {
+            string subscriptionKey = "6b356c17c9ad8c687e4b62b41aa12d8c";
+            string uri = "https://api.microsofttranslator.com/v2/Http.svc/GetLanguagesForTranslate";
+
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("bf79be41d938dffb9bc7ee6feb8cf553", subscriptionkey_LanguageTranslation);
+
+            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await client.GetAsync(uri);
+            var content = await response.Content.ReadAsStringAsync();
+            Console.Write(content);
+        }
+    }
+}

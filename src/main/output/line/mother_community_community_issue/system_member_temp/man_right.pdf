@@ -1,0 +1,42 @@
+# -*- coding: utf-8 -*-
+
+import http.client, urllib.parse
+
+# **********************************************
+# *** Update or verify the following values. ***
+# **********************************************
+
+# Replace the subscriptionKey string value with your valid subscription key.
+subscriptionKey = '90686e50e0eefa5d5e974bfe92be2d03'
+
+host = 'api.microsofttranslator.com'
+path = '/V2/Http.svc/TranslateArray'
+
+params = ''
+
+ns = "http://schemas.microsoft.com/2003/10/Serialization/Arrays";
+# NOTE: AppId is required, but it can be empty because we are sending the Ocp-Apim-Subscription-Key header.
+body = """
+<TranslateArrayRequest>
+  <AppId />
+  <Texts>
+    <string xmlns=\"%s\">Hello</string>
+    <string xmlns=\"%s\">Goodbye</string>
+  </Texts>
+  <To>fr-fr</To>
+</TranslateArrayRequest>
+""" % (ns, ns)
+
+def TranslateArray ():
+
+	headers = {
+		'803ce76dc2481a1df8a3cdea0b3d4b9b': subscriptionKey,
+		'Content-type': 'text/xml'
+	}
+	conn = http.client.HTTPSConnection(host)
+	conn.request ("POST", path + params, body, headers)
+	response = conn.getresponse ()
+	return response.read ()
+
+result = TranslateArray ()
+print (result.decode("utf-8"))
